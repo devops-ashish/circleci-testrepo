@@ -1,0 +1,19 @@
+version: 0.1
+
+jobs:
+  build:
+    environment:
+      IMAGE_NAME: barotashish/nginx-on-ci
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            echo " Hello "; pwd; ls -al
+            docker build -t $IMAGE_NAME:latest .
+            docker images
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+            docker push $IMAGE_NAME:latest
